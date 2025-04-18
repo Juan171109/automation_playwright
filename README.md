@@ -286,5 +286,3 @@ For any questions or support needs, please reach out to:
 ## License
 
 [License Information]
-=======
-# automation_playwright

@@ -19,44 +19,18 @@ export class TestHelper {
   }
 
   /**
-   * Handle dialogs reliably
-   * @param actionFn - Function that triggers the dialog
-   * @param acceptDialog - Whether to accept or dismiss the dialog (default: true)
-   * @returns Dialog message
+   * Setup dialog handler for alerts
+   * @returns Promise with dialog message
    */
-  async handleDialog(actionFn: () => Promise<void>, acceptDialog: boolean = true): Promise<string> {
-    // Create a listener function
-    const dialogListener = async (dialog: any) => {
-      // We'll handle the dialog after capturing its message
-    };
+  async setupDialogHandler(): Promise<string> {
+    let dialogMessage = '';
     
-    // Add the event listener
-    this.page.on('dialog', dialogListener);
+    this.page.on('dialog', async dialog => {
+      dialogMessage = dialog.message();
+      await dialog.accept();
+    });
     
-    try {
-      // Wait for dialog events
-      const [dialog] = await Promise.all([
-        // Wait for a dialog to be triggered
-        this.page.waitForEvent('dialog'),
-        // Execute the action that triggers the dialog
-        actionFn()
-      ]);
-      
-      // Capture the dialog message
-      const message = dialog.message();
-      
-      // Accept or dismiss the dialog based on parameter
-      if (acceptDialog) {
-        await dialog.accept();
-      } else {
-        await dialog.dismiss();
-      }
-      
-      return message;
-    } finally {
-      // Remove the event listener to avoid memory leaks
-      this.page.removeListener('dialog', dialogListener);
-    }
+    return dialogMessage;
   }
 
   /**
