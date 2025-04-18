@@ -1,0 +1,67 @@
+trigger:
+  - main
+  - develop
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+variables:
+  - group: mock-shop-test-variables  # Variable group for sensitive data like credentials
+
+stages:
+  - stage: Test
+    displayName: 'Run Tests'
+    jobs:
+      - job: InstallAndTest
+        displayName: 'Install dependencies and run tests'
+        steps:
+          - task: NodeTool@0
+            inputs:
+              versionSpec: '18.x'
+            displayName: 'Install Node.js'
+          
+          - script: |
+              npm ci
+            displayName: 'Install dependencies'
+          
+          - script: |
+              npx playwright install --with-deps
+            displayName: 'Install Playwright browsers'
+          
+          # Create .env file with credentials from variable group
+          - script: |
+              echo "BASE_URL=$(BASE_URL)" > .env
+              echo "USERNAME=$(USERNAME)" >> .env
+              echo "PASSWORD=$(PASSWORD)" >> .env
+              echo "STORAGE_STATE=.auth/state.json" >> .env
+            displayName: 'Setup environment variables'
+          
+          # Start the mock shop app
+          - script: |
+              npx serve -s . &
+              sleep 5  # Wait for server to start
+            displayName: 'Start mock shop app'
+          
+          # Run tests with retry logic
+          - script: |
+              npm test || npm test
+            displayName: 'Run tests with retry'
+          
+          # Publish test results
+          - task: PublishTestResults@2
+            inputs:
+              testResultsFormat: 'JUnit'
+              testResultsFiles: '**/test-results.xml'
+              mergeTestResults: true
+              testRunTitle: 'Playwright Tests'
+            condition: succeededOrFailed()
+            displayName: 'Publish test results'
+          
+          # Publish HTML report as an artifact
+          - task: PublishPipelineArtifact@1
+            inputs:
+              targetPath: 'playwright-report'
+              artifact: 'playwright-report'
+              publishLocation: 'pipeline'
+            condition: succeededOrFailed()
+            displayName: 'Publish HTML report'

@@ -1,0 +1,29 @@
+# Node modules
+node_modules/
+
+# Environment variables
+.env
+
+# Playwright
+.auth/
+test-results/
+playwright-report/
+/blob-report/
+/playwright/.cache/
+
+# Build outputs
+dist/
+
+# IDE files
+.vscode/
+.idea/
+*.iml
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+
+# OS specific
+.DS_Store
+Thumbs.db

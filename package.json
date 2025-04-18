@@ -1,0 +1,28 @@
+{
+  "name": "mock-shop-tests",
+  "version": "1.0.0",
+  "description": "Playwright TypeScript automation tests for Mock Shop",
+  "main": "index.js",
+  "scripts": {
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
+    "test:headed": "playwright test --headed",
+    "test:debug": "playwright test --debug",
+    "test:login": "playwright test login.spec.ts",
+    "test:shop": "playwright test shop.spec.ts",
+    "test:basket": "playwright test basket.spec.ts"
+  },
+  "keywords": [
+    "testing",
+    "playwright",
+    "automation"
+  ],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.41.0",
+    "@types/node": "^20.9.0",
+    "dotenv": "^16.3.1",
+    "typescript": "^5.2.2"
+  }
+}
