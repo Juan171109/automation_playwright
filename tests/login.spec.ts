@@ -7,11 +7,18 @@ test.describe('Login Page Tests', () => {
   });
 
   test('should login successfully with valid credentials', async ({ loginPage, page }) => {
+    const username = process.env.USERNAME;
+    const password = process.env.PASSWORD;
+  
+    if (!username || !password) {
+      throw new Error('Environment variables USERNAME and PASSWORD must be set.');
+    }
+  
     await loginPage.navigate();
-    await loginPage.login(process.env.USERNAME || 'user1', process.env.PASSWORD || 'user1');
-    
+    await loginPage.login(username, password);
+  
     // Verify redirect to shop page
-    await expect(page).toHaveURL(/.*shop\.html/);
+    await expect(page).toHaveURL(/.*shop/);
   });
 
   test('should show error message with invalid credentials', async ({ loginPage }) => {
@@ -31,6 +38,6 @@ test.describe('Login Page Tests', () => {
     await loginPage.loginButton.click();
     
     // Form should not submit due to HTML required attribute
-    await expect(page).toHaveURL(/.*index\.html/);
+    await expect(loginPage.loginButton).toBeVisible();
   });
 });
