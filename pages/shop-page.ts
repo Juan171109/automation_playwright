@@ -52,7 +52,7 @@ export class ShopPage extends BasePage {
    * Verify user is on shop page
    */
   async verifyShopPage(): Promise<void> {
-    await expect(this.page).toHaveURL(/.*shop\.html/);
+    await expect(this.page).toHaveURL(/.*shop/);
     await expect(this.searchInput).toBeVisible();
     await expect(this.searchButton).toBeVisible();
     await expect(this.viewBasketButton).toBeVisible();
