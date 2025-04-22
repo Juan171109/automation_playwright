@@ -1,5 +1,6 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './base-page';
+import { LoginPage } from './login-page';
 
 /**
  * Page Object Model for Basket Page
@@ -63,29 +64,29 @@ export class BasketPage extends BasePage {
    * Clear basket
    * @returns Alert message
    */
-  async clearBasket(): Promise<string> {
+  async clearBasket(): Promise<void> {
     let alertMessage = '';
     
-    // Set up dialog handler
-    this.page.on('dialog', async dialog => {
-      alertMessage = dialog.message();
-      await dialog.accept();
-    });
+    // // Set up dialog handler
+    // this.page.on('dialog', async dialog => {
+    //   alertMessage = dialog.message();
+    //   await dialog.accept();
+    // });
+
     
     await this.clearBasketButton.click();
+    await this.page.waitForTimeout(500); // Wait for alert to appear
     
-    // Allow time for the alert to be processed
-    await this.page.waitForTimeout(500);
-    
-    return alertMessage;
+    // return alertMessage;
   }
 
   /**
    * Logout from basket page
    */
-  async logout(): Promise<void> {
+  async logout(): Promise<LoginPage> {
     await this.logoutButton.click();
     await this.waitForNavigation();
+    return new LoginPage(this.page);
   }
 
   /**

@@ -1,5 +1,7 @@
 import { Page, Locator, expect } from '@playwright/test';
 import { BasePage } from './base-page';
+import { BasketPage } from './basket-page';
+import { LoginPage } from './login-page';
 
 /**
  * Interface representing a product in the shop
@@ -73,17 +75,20 @@ export class ShopPage extends BasePage {
   /**
    * Navigate to basket page
    */
-  async goToBasket(): Promise<void> {
+  async goToBasket(): Promise<BasketPage> {
     await this.viewBasketButton.click();
     await this.waitForNavigation();
+    return new BasketPage(this.page);
   }
 
   /**
    * Logout from shop
    */
-  async logout(): Promise<void> {
+  async logout(): Promise<LoginPage> {
     await this.logoutButton.click();
     await this.waitForNavigation();
+
+    return new LoginPage(this.page);
   }
 
   /**

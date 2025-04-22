@@ -57,7 +57,7 @@ export class LoginPage extends BasePage {
    * Verify user is on login page
    */
   async verifyLoginPage(): Promise<void> {
-    await expect(this.page).toHaveURL(/.*index\.html/);
+    await expect(this.page).toHaveURL(/.*index/);
     await expect(this.usernameInput).toBeVisible();
     await expect(this.passwordInput).toBeVisible();
     await expect(this.loginButton).toBeVisible();

@@ -7,7 +7,7 @@ test.describe('Shop Page Tests', () => {
     await authenticatedPage.searchButton.click();
   });
 
-  test.skip('should display all 6 products with correct details', async ({ authenticatedPage }) => {
+  test('should display all 6 products with correct details', async ({ authenticatedPage }) => {
     // Verify 6 products are displayed
     await authenticatedPage.verifyAllProductsDisplayed();
     
@@ -23,7 +23,7 @@ test.describe('Shop Page Tests', () => {
     expect(firstProduct.qty).toBe(10);
   });
 
-  test.skip('should filter products by product code', async ({ authenticatedPage }) => {
+  test('should filter products by product code', async ({ authenticatedPage }) => {
     // Search for P003
     await authenticatedPage.searchProducts('P003');
     
@@ -36,7 +36,7 @@ test.describe('Shop Page Tests', () => {
     expect(product.description).toBe('Whole Wheat Bread');
   });
 
-  test.skip('should filter products by description (case-insensitive)', async ({ authenticatedPage }) => {
+  test('should filter products by description (case-insensitive)', async ({ authenticatedPage }) => {
     // Search for "fresh" (case-insensitive)
     await authenticatedPage.searchProducts('fresh');
     
@@ -51,19 +51,12 @@ test.describe('Shop Page Tests', () => {
     expect(product2.description.toLowerCase()).toContain('fresh');
   });
 
-  test.skip('should add product to basket and show alert', async ({ authenticatedPage, page }) => {
-    // Set up dialog listener in page
-    let dialogMessage = '';
-    page.on('dialog', async dialog => {
-      dialogMessage = dialog.message();
-      await dialog.accept();
-    });
-    
-    // Add product to basket
-    await authenticatedPage.addToBasket('P001');
+  test('should add product to basket and show alert', async ({ authenticatedPage}) => {
+
+    const alertMessage = await authenticatedPage.addToBasket('P001');
     
     // Verify alert message
-    expect(dialogMessage).toBe('Fresh Apples added to basket!');
+    expect(alertMessage).toBe('Fresh Apples added to basket!');
     
     // Verify basket data in localStorage
     const basketData = await authenticatedPage.getBasketData();
@@ -72,26 +65,28 @@ test.describe('Shop Page Tests', () => {
     expect(basketData[0].qty).toBe(1);
   });
 
-  test('should navigate to basket page', async ({ authenticatedPage, page }) => {
-    await authenticatedPage.goToBasket();
-    
+  test('should navigate to basket page', async ({ authenticatedPage }) => {
+    // await authenticatedPage.goToBasket();
+    const basketPage = await authenticatedPage.goToBasket();
     // Verify redirect to basket page
-    await expect(page).toHaveURL(/.*basket/);
+    const url = await basketPage.getCurrentUrl();
+    console.log(url);
+    expect(url).toMatch(/.*basket/);
   });
 
-  test('should logout and clear basket', async ({ authenticatedPage, page }) => {
+  test('should logout and clear basket', async ({ authenticatedPage }) => {
     // First add a product to basket
     await authenticatedPage.addToBasket('P002');
     
     // Then logout
-    await authenticatedPage.logout();
+    const loginPage = await authenticatedPage.logout();
     
     // Verify redirect to login page
-    // await expect(page).toHaveURL(/.*index\.html/);
-    await expect(page.locator('#username')).toBeVisible();
+    await expect(loginPage.usernameInput).toBeVisible();
     
     // Verify basket is cleared in localStorage
-    const basketJson = await page.evaluate(() => window.localStorage.getItem('basket'));
-    expect(basketJson).toBe('[]');
+    const basketJson = await authenticatedPage.getBasketData();
+    expect(basketJson.length).toBe(0);
+
   });
 });

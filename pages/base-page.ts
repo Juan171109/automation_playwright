@@ -22,6 +22,8 @@ export class BasePage {
     await this.page.goto(url);
   }
 
+
+
   /**
    * Get current page URL
    * @returns Current URL as string

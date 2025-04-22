@@ -37,10 +37,13 @@ export const test = base.extend<AuthFixtures>({
   // Pre-authenticated page fixture
   authenticatedPage: async ({ browser }, use) => {
     // Retrieve credentials from environment variables
-    const username = process.env.USERNAME || 'user1';
-    const password = process.env.PASSWORD || 'user1';
+    const username = process.env.USERNAME;
+    const password = process.env.PASSWORD;
     const storageStatePath = process.env.STORAGE_STATE || '.auth/state.json';
-    
+
+    if (!username || !password) {
+      throw new Error('Environment variables USERNAME and PASSWORD must be set.');
+    }
     // Create auth helper
     const authHelper = new AuthHelper(storageStatePath);
     
