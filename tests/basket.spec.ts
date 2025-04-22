@@ -85,10 +85,10 @@ test.describe('Basket Page Tests', () => {
     const basketPage = await authenticatedPage.goToBasket();
     
     // Clear basket
-    await basketPage.clearBasket();
+    const alertMessage = await basketPage.clearBasket();
     
     // Verify alert message
-    // expect(alertMessage).toBe('Basket cleared!');
+    expect(alertMessage).toBe('Basket cleared!');
     
     // Verify basket is empty
     await expect(basketPage.emptyBasketMessage).toBeVisible();

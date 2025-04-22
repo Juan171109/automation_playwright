@@ -64,20 +64,24 @@ export class BasketPage extends BasePage {
    * Clear basket
    * @returns Alert message
    */
-  async clearBasket(): Promise<void> {
+  async clearBasket(): Promise<string> {
     let alertMessage = '';
     
-    // // Set up dialog handler
-    // this.page.on('dialog', async dialog => {
-    //   alertMessage = dialog.message();
-    //   await dialog.accept();
-    // });
-
+    // Create a promise that will resolve when the dialog is handled
+    const dialogPromise = new Promise<string>(resolve => {
+      // Use once instead of on to ensure the handler is auto-removed after first use
+      this.page.once('dialog', async dialog => {
+        alertMessage = dialog.message();
+        await dialog.accept();
+        resolve(alertMessage);
+      });
+    });
     
     await this.clearBasketButton.click();
-    await this.page.waitForTimeout(500); // Wait for alert to appear
+    // await this.page.waitForTimeout(500); // Wait for alert to appear
+    await dialogPromise; // Wait for the dialog to be handled
     
-    // return alertMessage;
+    return alertMessage;
   }
 
   /**

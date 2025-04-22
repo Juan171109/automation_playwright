@@ -97,19 +97,35 @@ export class ShopPage extends BasePage {
    * @returns Alert message
    */
   async addToBasket(productCode: string): Promise<string> {
+    // let alertMessage = '';
+    
+    // // Set up dialog handler
+    // this.page.on('dialog', async dialog => {
+    //   alertMessage = dialog.message();
+    //   await dialog.accept();
+    // });
+    
     let alertMessage = '';
     
-    // Set up dialog handler
-    this.page.on('dialog', async dialog => {
-      alertMessage = dialog.message();
-      await dialog.accept();
+    // Create a promise that will resolve when the dialog is handled
+    const dialogPromise = new Promise<string>(resolve => {
+      // Use once instead of on to ensure the handler is auto-removed after first use
+      this.page.once('dialog', async dialog => {
+        alertMessage = dialog.message();
+        await dialog.accept();
+        resolve(alertMessage);
+      });
     });
     
+
     // Find and click the Add to Basket button for the specific product
     await this.page.locator(`.product-card:has(:text("${productCode}")) button:text("Add to Basket")`).click();
     
     // Allow time for the alert to be processed
-    await this.page.waitForTimeout(500);
+    // await this.page.waitForTimeout(500);
+
+    // Wait for the dialog to be handled
+    await dialogPromise;
     
     return alertMessage;
   }
