@@ -251,7 +251,7 @@ This framework follows these test automation best practices:
 2. **Reusable Authentication**: Login once and reuse session for efficiency
 3. **Environment Variables**: Secure credential management
 4. **CI/CD Integration**: Automated test execution in pipelines
-5. **Clean State Management**: Each test starts with a known clean state
+5. **Clean State Management**: Each test starts with a known clean state, and delete test data after finish testing.
 6. **Comprehensive Test Coverage**: All requirements and edge cases tested
 7. **Clear Test Organization**: Logical grouping of tests by functionality
 8. **Robust Assertions**: Verify all aspects of application behavior
